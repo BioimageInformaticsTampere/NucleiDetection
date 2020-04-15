@@ -1,0 +1,9 @@
+#### Input arguments for nuclei detection algorithm ####
+########################################################
+
+MODE:detection:
+imagepath:/data/: # full path to images
+image_filetype:tif:
+dataset_mpp:0.5:
+outputpath:/data/output/:
+output_mode:confidence,visualisation:
