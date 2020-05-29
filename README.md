@@ -3,11 +3,7 @@
 Supplementary material for article "Generalized fixation invariant nuclei detection through domain adaptation based deep learning" by Valkonen et al.
 
 
-
 # General information
-
-Code for the study presented in “Generalized fixation invariant nuclei detection through domain adaptation based deep learning” by Valkonen et al.
-
 
 Set the parameters in input argument file (more details in the main file, NucDetect.py):
 
