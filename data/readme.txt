@@ -29,8 +29,7 @@ NucDetectData
    -HE
 
 
-TRAIN DATA:
-In total 48 images (2444 x 2444 pixels) from 16 patients stained with hematoxylin and eosin with three different tissue fixative. Corresponding nuclei location annotations can be found in the annotations directory. 
+In total 48 images (0.23µm/pixel resolution, 2444 x 2444 pixels) from 16 patients. Tissue preparation methods: fresh frozen, formalin-fixed paraffin-embedded, and PAXgene-fixed paraffin-embedded. The tissue sections were stained with H&E and scanned with a Hamamatsu Photonics Nano Zoomer XR C12000 automated scanner.  Corresponding nuclei location annotations can be found in the annotations directory. 
 
 FIXATIVE_XX.tif
 CellCounter_FIXATIVE_XX.xml
