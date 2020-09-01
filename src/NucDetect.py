@@ -71,7 +71,7 @@ def main():
     import time
     import logging
     from datetime import datetime
-
+    import argparse
     from NucleiDetection.utils import auxiliary_functions, constants
 
     LOGFILE = os.path.join(
@@ -84,11 +84,11 @@ def main():
         level=logging.DEBUG,
     )
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("config", type=str, default=constants.DEFAULT_INPUT_ARGUMENTS), help="Path to config file")
+    args = parser.parse_args()
     time_start = time.time()
-    pathsplit = os.path.split(os.path.abspath(sys.argv[0]))
-    os.chdir(pathsplit[0])
 
-    logging.debug("Set working directory: " + os.getcwd())
 
     with open(sys.argv[1]) as f:
         arguments = f.readlines()
