@@ -5,7 +5,7 @@ Created on Sat Aug 31 08:18:26 2019
 
 RUN NucDetect script:
     cd to the script directory
-    python NucDetect.py input_arguments.txt > output.txt 2> errors.txt
+    python detect_nuclei.py input_arguments.txt > output.txt 2> errors.txt
 
     ## this command prints the script outputs in output.txt file and
     ## errors in errors.txt file
@@ -64,15 +64,18 @@ use ':' as delimiter before and after the input argument
 contact: valkonen.mira@gmail.com
 """
 
+import sys
+import os
+import time
+import logging
+from datetime import datetime
+import argparse
+import configparser
+
+from nucleidetection.utils import auxiliary_functions, constants
+
 
 def main():
-    import sys
-    import os
-    import time
-    import logging
-    from datetime import datetime
-    import argparse
-    from NucleiDetection.utils import auxiliary_functions, constants
 
     LOGFILE = os.path.join(
         constants.LOGDIR, datetime.now().strftime("%Y-%m-%d-%H-%M-%S_log.log")
@@ -85,15 +88,27 @@ def main():
     )
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("config", type=str, default=constants.DEFAULT_INPUT_ARGUMENTS), help="Path to config file")
+    parser.add_argument(
+        "-c", "--config", type=str, default="DEFAULT", help="Configuration to choose"
+    )
     args = parser.parse_args()
+
+    config = configparser.ConfigParser()
+
+    # We want to dynamically create the default config file to ensure
+    # correct paths on different OSs
+
+    if not os.path.exists(constants.CONFIGFILE):
+        config["DEFAULT"] = constants.DEFAULT_CONFIG
+        config.write(open(constants.CONFIGFILE, "w"))
+    else:
+        config.read(constants.CONFIGFILE)
+
+    config = config[args.config]
+
     time_start = time.time()
 
-
-    with open(sys.argv[1]) as f:
-        arguments = f.readlines()
-
-    auxiliary_functions.run_nucdetect(arguments)
+    auxiliary_functions.run_nucdetect(config)
 
     logging.debug("Elapsed time: " + str(time.time() - time_start))
 

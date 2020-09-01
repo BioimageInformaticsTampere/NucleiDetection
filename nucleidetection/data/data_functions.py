@@ -6,13 +6,15 @@ Created on Sun Sep  1 08:29:42 2019
 @author: miravalkonen
 """
 
+import configparser
+import random
+
 import numpy as np
 from skimage.util import random_noise
 from skimage.color import rgb2hsv, hsv2rgb
-import random
 
-from NucleiDetection.detect import auxiliary_functions
-from NucleiDetection.data import image_loader
+from nucleidetection.utils import auxiliary_functions
+from nucleidetection.data import image_loader
 
 
 def get_blocks_from_coordinates(
@@ -38,7 +40,6 @@ def get_blocks_from_coordinates(
             if x > block_size[0] and y > block_size[1]:
                 proc_coord[blockcounter, :] = coordinates[i, :]
                 block = input_img[x - stepx : x + stepx, y - stepy : y + stepy]
-                # plt.imshow(block)
 
                 blocks[blockcounter, :, :, 0] = block
                 blockcounter = blockcounter + 1
@@ -157,15 +158,15 @@ def augment_data(cnninput, maskinput):
 
 # TH2 needs to be higher than TH
 def get_input_from_confidence(
-    project_specs,
-    block_size=128,
-    threshold=0.5,
-    use_multi_threshold=False,
-    threshold2=0.6,
+    config: configparser.ConfigParser,
+    block_size: int = 128,
+    threshold: float = 0.5,
+    use_multi_threshold: bool = False,
+    threshold2: float = 0.6,
 ):
 
-    inputpath = project_specs.imagepath
-    confidencepath = project_specs.outputpath
+    inputpath = config["imagepath"]
+    confidencepath = config["outputpath"]
 
     cnninput = []
     maskinput = []
@@ -177,10 +178,10 @@ def get_input_from_confidence(
 
         substr = conffiles[idx].split("_conf")
 
-        conffile = confidencepath + conffiles[idx]
-        imagefile = inputpath + substr[0] + "." + project_specs.image_filetype
+        conffile = os.path.join(confidencepath,conffiles[idx])
+        imagefile = os.path.join(inputpath, f"{substr[0]}.{config['image_filetype']}")
         img = image_loader.load_image(
-            imagefile, project_specs.dataset_mpp, project_specs.model_mpp
+            imagefile, config.getfloat("dataset_mpp"), config.getfloat("model_mpp")
         )
         conf = image_loader.load_conf(conffile)
 
@@ -200,8 +201,8 @@ def get_input_from_confidence(
             mask = auxiliary_functions.generate_binary_mask_from_coordinates(
                 coordinates,
                 np.shape(conf),
-                project_specs.masktype,
-                markersize=project_specs.mask_element_size,
+                config["masktype"],
+                markersize=config.getint("mask_element_size"),
             )
 
             numchannels = 3

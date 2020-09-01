@@ -1,47 +1,55 @@
 # NucleiDetection
 
-Supplementary material for article "Generalized fixation invariant nuclei detection through domain adaptation based deep learning" by Valkonen et al.
+Based on the tool introduced in the article:
 
+> "Generalized fixation invariant nuclei detection through domain adaptation based deep learning" (Valkonen et al.)
+
+Refactored by Hannu Hakkola (hannu.hakkola@tuni.fi)
+
+This code is licenced under GPL licence. For more information, see `LICENCE` file
 
 ## Usage
 
 Set the parameters in input argument file (more details in the main file, NucDetect.py):
 
-EXAMPLE input argument file (input_arguments.txt):
-use ':' as delimiter before and after each input argument
+EXAMPLE input argument configuration (in config.ini, created at first run of the script):
 
 ```
-    MODE:detection:
-    imagepath:/data/histoimages/:
-    image_filetype:tif:
-    dataset_mpp:0.5:
-    outputpath:/data/output/:
-    output_mode:confidence,coordinates,visualisation:
-    mask_path:/data/masks/:
-    mask_filetype:png:
-    mask_identifier_suffix:_mask:
+[NewConfiguration]
+MODE = detection
+imagepath = /data/histoimages/
+image_filetype = tif
+dataset_mpp = 0.5
+outputpath = /data/output/
+output_mode = confidence,coordinates,visualisation
+mask_path = /data/masks/
+mask_filetype = png
+mask_identifier_suffix = _mask
 ```
 
 
-For running the NucDetect script, cd to the script path:
+For running the `detect_nuclei` script with above configuration, cd to the script path:
 
-python NucDetect.py input_arguments.txt
-
+`python detect_nuclei.py --config NewConfiguration`
 
 ## Prediction
 
-The algorithm loads the trained CNN model from current working directory.
+The algorithm loads the trained CNN model from the project directory
 There should be two files:
 
-cwd/model/cnnmodel.h5
-cwd/model/cnnmodel.json
+```
+./data/models/trained_models/cnnmodel.h5
+./data/models/trained_models/cnnmodel.json
+```
 
 ## Domain adaptation
 
 The DA model will be saved in:
 
-cwd/model/DA-model.h5
-cwd/model/DA-model.json
+```
+./data/models/trained_models/DA-model.h5
+./data/models/trained_models/DA-model.json
+```
 
 ## Installation
 
@@ -54,9 +62,11 @@ cd NucleiDetection
 conda create -n nucleidetection
 source activate nucleidetection
 
-pip install -e .
+pip install -r requirements.txt
 ```
 
 
 
-contact: valkonen.mira@gmail.com
+## Contact:
+* [Mira](mailto:valkonen.mira@gmail.com)
+* [Hannu](mailto:hannu.hakkola@tuni.fi)
