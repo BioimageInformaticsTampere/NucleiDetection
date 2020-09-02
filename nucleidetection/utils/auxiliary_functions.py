@@ -15,42 +15,19 @@ import scipy
 from scipy import ndimage as ndi
 from scipy.ndimage import label, generate_binary_structure
 from skimage.morphology import binary_dilation
-import matplotlib.pyplot as plt
 from skimage import img_as_ubyte
+from skimage.io import imsave
+import matplotlib.pyplot as plt
 
-from nucleidetection.models import model
-from nucleidetection.utils import constants
 
-def run_nucdetect(config: configparser.ConfigParser) -> None:
-    """Train or predict nuclei based on config file
+def get_filelist(path, filetype) -> list:
+    """Get list of files specified by filetype in given dir
 
-    :param config: configparser.ConfigParser() object initialized with correct values
-    :returns: None
+    :param path: full filepath to chosen dir
+    :param filetype: file extension without leading dot
+
+    :returns: list of strings (filenames)
     """
-    logging.debug("Input path: " + config["imagepath"])
-    logging.debug("Input imagetype: " + config["image_filetype"])
-    logging.debug("Micrometers per pixel of the dataset: " + str(config.getfloat("dataset_mpp")))
-    logging.debug("Detection results will be generated to path: " + config["outputpath"])
-    logging.debug("MODE: " + config["MODE"])
-
-    if not os.path.exists(config["outputpath"]):
-        os.makedirs(config["outputpath"])
-
-    if config["MODE"] == "detection":
-
-        ## load trained model and predict nuc locations
-        NucDetectNet = model.load_trained_model(
-            config["model_path"], "cnnmodel"
-        )
-        model.predict_with_model(NucDetectNet, config)
-
-    elif config["MODE"] == "adapt":
-
-        ## tune the trained  model with new data
-        model.domain_adapt(config)
-
-
-def get_filelist(path, filetype):
 
     filelist = []
     for file in os.listdir(path):
@@ -64,17 +41,20 @@ def vis_detections_from_coordinates(
     img, coordinates, name, savefig=False, outputpath=None, plotfig=False
 ):
 
+    # TODO: Docstring from Mira
     nucim = get_coordinate_overlay(img, coordinates, 4)
     if plotfig:
         plt.imshow(nucim)
     if savefig:
-        filename = outputpath + name + ".tif"
-        scipy.misc.imsave(filename, nucim)
+        filename = os.path.join(outputpath, name + ".tif")
+        imsave(filename, nucim)
 
     return nucim
 
 
 def get_coordinates_from_confidence(conf, threshold, coordtype):
+
+    # TODO: Docstring from Mira
 
     conf = img_as_ubyte(conf)
     pred_binary = conf > threshold * 255
@@ -91,13 +71,14 @@ def get_coordinates_from_confidence(conf, threshold, coordtype):
 def generate_binary_mask_from_coordinates(
     coordinates, image_size, markertype, markersize=1
 ):
+    # TODO: Docstring from Mira
 
     mask = np.zeros([image_size[0], image_size[1]], dtype="float32")
     for i in range(len(coordinates)):
         mask[coordinates[i][0], coordinates[i][1]] = 1
 
     if markertype == "coordinates":
-        mask = mask
+        pass
 
     elif markertype == "ball":
         selem = np.asarray(
@@ -119,6 +100,8 @@ def generate_binary_mask_from_coordinates(
 
 
 def get_coordinate_overlay(orig_image, coordinates, mark_size=4):
+
+    # TODO: Docstring from Mira
 
     orig_image = img_as_ubyte(orig_image)
     R = orig_image[:, :, 0]

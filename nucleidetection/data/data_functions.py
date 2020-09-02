@@ -8,6 +8,7 @@ Created on Sun Sep  1 08:29:42 2019
 
 import configparser
 import random
+import os
 
 import numpy as np
 from skimage.util import random_noise
@@ -19,7 +20,8 @@ from nucleidetection.data import image_loader
 
 def get_blocks_from_coordinates(
     coordinates, input_img, block_size, num_channels, imtype
-):
+) -> tuple:
+    # TODO: Docstring from Mira
 
     if num_channels == 1:
         proc_coord = np.zeros([len(coordinates), 2], dtype="int")
@@ -90,26 +92,56 @@ def get_blocks_from_coordinates(
     return imageblocks, proc_coord
 
 
-def shuffle_data(iminput, minput):
+def shuffle_data(
+    image_input_array: np.array, mask_input_array: np.array
+) -> (np.array, np.array):
+    """Shuffle training data arrays
 
-    inputshape = np.shape(iminput)
+    Shuffles given NumPy arrays with the same shuffling index.
+    The arrays need to have equal length in their first (0th) axis.
+
+    :param image_input_array: image input for a NN model (NumPy array)
+    :param mask_input_array: mask input for a NN model (NumPy array)
+    :returns: Tuple of NumPy arrays (shuffled image and mask inputs)
+    """
+
+    inputshape = np.shape(image_input_array)
 
     shuffle_idx = random.sample(range(inputshape[0]), inputshape[0])
 
-    shuffled_cnninput = iminput[shuffle_idx, :, :, :]
-    shuffled_maskinput = minput[shuffle_idx, :, :, :]
+    shuffled_cnninput = image_input_array[shuffle_idx, :, :, :]
+    shuffled_maskinput = mask_input_array[shuffle_idx, :, :, :]
 
     return shuffled_cnninput, shuffled_maskinput
 
 
-def shift_hue(x, shift=0.0):
+def shift_hue(input_image: np.array, shift: float = 0.0) -> np.array:
+    """Shifts an RGB image hue (in HSV) the amount
+    specified by the shift parameter.
 
-    hsv = rgb2hsv(x)
+    :param input_image: Image to shift hue, RGB NumPy array
+    :param shift: HSV hue value to add to the hue value in the image
+
+    :returns: RGB NumPy array with the hue shifted
+    """
+    hsv = rgb2hsv(input_image)
     hsv[:, :, 0] += shift
     return hsv2rgb(hsv)
 
 
-def augment_data(cnninput, maskinput):
+def augment_data(cnninput: np.array, maskinput: np.array) -> (np.array, np.array):
+    """Perform data augmentation to x, y in training data
+
+    Depending on the image index in the array, the images are hue shifted
+    and/or random noise is applied to the image.
+
+    :param cnninput: NumPy array of images, X
+    :param maskinput: NumPy array of (mask) images, Y
+
+    :returns: tuple of augmented NumPy arrays
+    """
+
+    # Keras can probably perform this automatically
 
     datashape = np.shape(cnninput)
     maskshape = np.shape(maskinput)
@@ -132,7 +164,6 @@ def augment_data(cnninput, maskinput):
     for idx in range(datashape[0]):
 
         sample = cnninput[idx, :, :, :]
-        row, col, ch = sample.shape
         mod_method = idx % 3 + 1
 
         if mod_method == 1:
@@ -165,6 +196,8 @@ def get_input_from_confidence(
     threshold2: float = 0.6,
 ):
 
+    # TODO: get docstring from Mira
+
     inputpath = config["imagepath"]
     confidencepath = config["outputpath"]
 
@@ -178,7 +211,7 @@ def get_input_from_confidence(
 
         substr = conffiles[idx].split("_conf")
 
-        conffile = os.path.join(confidencepath,conffiles[idx])
+        conffile = os.path.join(confidencepath, conffiles[idx])
         imagefile = os.path.join(inputpath, f"{substr[0]}.{config['image_filetype']}")
         img = image_loader.load_image(
             imagefile, config.getfloat("dataset_mpp"), config.getfloat("model_mpp")
@@ -210,6 +243,8 @@ def get_input_from_confidence(
             tmpcnninput, proc_coord = get_blocks_from_coordinates(
                 coordinates2, img, (block_size, block_size), numchannels, imtype
             )
+
+            # TODO: proc_coord_m not used
             tmpmaskinput, proc_coord_m = get_blocks_from_coordinates(
                 coordinates2, mask, (block_size, block_size), 1, imtype
             )

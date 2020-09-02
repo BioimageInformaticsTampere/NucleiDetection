@@ -64,7 +64,6 @@ use ':' as delimiter before and after the input argument
 contact: valkonen.mira@gmail.com
 """
 
-import sys
 import os
 import time
 import logging
@@ -73,6 +72,38 @@ import argparse
 import configparser
 
 from nucleidetection.utils import auxiliary_functions, constants
+from nucleidetection.models import model
+
+
+def run_nucdetect(config: configparser.ConfigParser) -> None:
+    """Train or predict nuclei based on config file
+
+    :param config: configparser.ConfigParser() object initialized with correct values
+    :returns: None
+    """
+    logging.debug("Input path: " + config["imagepath"])
+    logging.debug("Input imagetype: " + config["image_filetype"])
+    logging.debug(
+        "Micrometers per pixel of the dataset: " + str(config.getfloat("dataset_mpp"))
+    )
+    logging.debug(
+        "Detection results will be generated to path: " + config["outputpath"]
+    )
+    logging.debug("MODE: " + config["MODE"])
+
+    if not os.path.exists(config["outputpath"]):
+        os.makedirs(config["outputpath"])
+
+    if config["MODE"] == "detection":
+
+        # load trained model and predict nuc locations
+        NucDetectNet = model.load_trained_model(config["model_path"], "cnnmodel")
+        model.predict_with_model(NucDetectNet, config)
+
+    elif config["MODE"] == "adapt":
+
+        # tune the trained  model with new data
+        model.domain_adapt(config)
 
 
 def main():
@@ -108,7 +139,7 @@ def main():
 
     time_start = time.time()
 
-    auxiliary_functions.run_nucdetect(config)
+    run_nucdetect(config)
 
     logging.debug("Elapsed time: " + str(time.time() - time_start))
 

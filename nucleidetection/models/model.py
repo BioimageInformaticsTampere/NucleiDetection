@@ -70,8 +70,8 @@ def domain_adapt(config: configparser.ConfigParser()) -> None:
     :returns: None
     """
 
-    TH1 = constants.DOMAIN_ADAPTATION_THRESHOLD1
-    TH2 = constants.DOMAIN_ADAPTATION_THRESHOLD2
+    th1 = constants.DOMAIN_ADAPTATION_THRESHOLD1
+    th2 = constants.DOMAIN_ADAPTATION_THRESHOLD2
     block_size = config.getint("block_size")
 
     nuc_detect_net = load_trained_model(config["model_path"], constants.CNNMODEL)
@@ -79,9 +79,9 @@ def domain_adapt(config: configparser.ConfigParser()) -> None:
     cnninput, maskinput, labels, coordinates = data_functions.get_input_from_confidence(
         config,
         block_size=block_size,
-        threshold=TH1,
+        threshold=th1,
         use_multi_threshold=True,
-        threshold2=TH2,
+        threshold2=th2,
     )
 
     # Perform data augmentation and shuffling
@@ -111,8 +111,8 @@ def predict_with_model(conv_net: Model, config: configparser.ConfigParser) -> No
 
     for idx in range(len(imagefiles)):
 
-        substr = imagefiles[idx].split(".")
-        imagefile = os.path.join(inputpath,imagefiles[idx])
+        output_file_basename = imagefiles[idx].split(".")
+        imagefile = os.path.join(inputpath, imagefiles[idx])
         img = image_loader.load_image(
             imagefile, config.getfloat("dataset_mpp"), config.getfloat("model_mpp"),
         )
@@ -132,10 +132,10 @@ def predict_with_model(conv_net: Model, config: configparser.ConfigParser) -> No
             outmode = output_mode[j]
 
             if outmode == "confidence":
-                fname = outputpath + substr[0] + "_conf.tif"
+                fname = os.path.join(outputpath, output_file_basename[0] + "_conf.tif")
                 io.imsave(fname, pred.astype("ubyte"))
             if outmode == "coordinates":
-                fname = outputpath + substr[0] + "_coord.tif"
+                fname = os.path.join(outputpath, output_file_basename[0] + "_coord.tif")
 
                 coordinates = auxiliary_functions.get_coordinates_from_confidence(
                     pred, 0.5, "int"
@@ -146,7 +146,7 @@ def predict_with_model(conv_net: Model, config: configparser.ConfigParser) -> No
                 io.imsave(fname, mask.astype("ubyte"))
 
             if outmode == "visualisation":
-                fname = outputpath + substr[0] + "_vis.tif"
+                fname = os.path.join(outputpath, output_file_basename[0] + "_vis.tif")
 
                 coordinates = auxiliary_functions.get_coordinates_from_confidence(
                     pred, 0.5, "int"
@@ -237,5 +237,5 @@ def save_training_history(history, savepath: str, modelname: str) -> None:
     realtime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
     outfilename = f"{modelname}_{realtime}_trainhistory.npy"
-    outfile_name = os.path.join(savepath, outfilename)
+    outfilename = os.path.join(savepath, outfilename)
     np.save(outfilename, traininghistory)

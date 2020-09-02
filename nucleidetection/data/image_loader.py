@@ -29,10 +29,8 @@ def load_image(imagefile: str, dataset_mpp: float, model_mpp: float) -> np.array
 
     # TODO: scipy.misc.imresize had option 'bilinear', not sure of this
     # TODO: write test for this
-    size_new = (int(img.shape[0] * (1/ds)), int(img.shape[1] * (1/ds)))
-    img = img_as_float(
-        resize(img[:, :, 0:3], size_new)
-    ).astype("float32")
+    size_new = (int(img.shape[0] * (1 / ds)), int(img.shape[1] * (1 / ds)))
+    img = img_as_float(resize(img[:, :, 0:3], size_new)).astype("float32")
 
     return img
 

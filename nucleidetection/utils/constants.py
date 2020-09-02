@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Sep 01 09:25:45 2020
+
+Constants used in the NucleiDetection project
+
+@author: hhakk
+"""
+
 from pathlib import Path
 
 # CONSTANTS USED IN PROJECT
@@ -7,8 +16,8 @@ from pathlib import Path
 DOMAIN_ADAPTATION_THRESHOLD1 = 0.8
 DOMAIN_ADAPTATION_THRESHOLD2 = 0.5
 
-CNNMODEL="cnnmodel"
-DAMODEL="DA-model"
+CNNMODEL = "cnnmodel"
+DAMODEL = "DA-model"
 
 # LOGGING DIRECTORY
 
