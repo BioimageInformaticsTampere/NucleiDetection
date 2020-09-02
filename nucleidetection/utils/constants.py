@@ -47,7 +47,7 @@ DEFAULT_CONFIG = {
     # "detection" / "adapt"
     "MODE": "detection",
     # Micormeters per pixel in model
-    "model_mpp": 0.5,
+    "model_mpp": 1.0,
     "batchoverlap": True,
     "masktype": "ball",
     "mask_element_size": 2,

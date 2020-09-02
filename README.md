@@ -59,10 +59,15 @@ cd NucleiDetection
 
 
 # Recommended: create a new virtual environment
-conda create -n nucleidetection
+conda create -n nucleidetection python=3.8
 source activate nucleidetection
 
 pip install -r requirements.txt
+
+# If training with a CUDA-capable device, you can install the needed libraries with conda:
+
+conda install cudatoolkit=10.1 cudnn
+
 ```
 
 
