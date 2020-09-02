@@ -70,6 +70,7 @@ import logging
 from datetime import datetime
 import argparse
 import configparser
+import json
 
 from nucleidetection.utils import auxiliary_functions, constants
 from nucleidetection.models import model
@@ -107,7 +108,9 @@ def run_nucdetect(config: configparser.ConfigParser) -> None:
         os.makedirs(config["figurepath"])
 
     # Backup of the config to local dir
-    config.write(open(os.path.join(config["outputpath"], "training_configuration.ini"), "w+"))
+    training_configuration = {key:value for key,value in [(option, config[option]) for option in config]}
+    with open(os.path.join(config["outputpath"], "training_configuration.json"), "w") as json_file:
+        json.dump(training_configuration, json_file)
 
     if config["MODE"] == "detection":
 
