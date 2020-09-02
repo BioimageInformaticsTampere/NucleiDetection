@@ -29,7 +29,7 @@ def train_model(
     maskinput: np.array,
     bsize: int = 20,
     nb_epoch: int = 5,
-) -> Model:
+) -> None:
     """Train nuclei detection model
 
     :param conv_net: keras model to train
@@ -39,7 +39,7 @@ def train_model(
     :param bsize: Batch size for the model
     :param nb_epoch: Number of epochs to train
 
-    :returns: trained keras Model object
+    :returns: None
 
     """
 
@@ -50,17 +50,8 @@ def train_model(
         cnninput, maskinput, batch_size=bsize, epochs=nb_epoch, verbose=1
     )
 
-    # TODO: move the dir creation to some main function for consistency
-    historyfilepath = os.path.join(constants.REPORTS, "training_history")
-    if not os.path.exists(historyfilepath):
-        os.makedirs(historyfilepath)
-
     save_trained_model(conv_net, config["model_path"], constants.DAMODEL)
-    save_training_history(history, historyfilepath, constants.DAMODEL, False)
-
-    # TODO: check if necessary return
-
-    return conv_net
+    save_training_history(history, config["historypath"], constants.DAMODEL)
 
 
 def domain_adapt(config: configparser.ConfigParser()) -> None:
@@ -88,7 +79,7 @@ def domain_adapt(config: configparser.ConfigParser()) -> None:
     cnninput, maskinput = data_functions.augment_data(cnninput, maskinput)
     cnninput, maskinput = data_functions.shuffle_data(cnninput, maskinput)
 
-    nuc_detect_net = train_model(nuc_detect_net, config, cnninput, maskinput)
+    train_model(nuc_detect_net, config, cnninput, maskinput)
 
 
 def predict_with_model(conv_net: Model, config: configparser.ConfigParser) -> None:
@@ -101,7 +92,8 @@ def predict_with_model(conv_net: Model, config: configparser.ConfigParser) -> No
     """
 
     inputpath = config["imagepath"]
-    outputpath = config["outputpath"]
+    outputpath = config["figurepath"]
+
     if not os.path.exists(outputpath):
         os.makedirs(outputpath)
 

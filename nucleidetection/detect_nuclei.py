@@ -91,8 +91,23 @@ def run_nucdetect(config: configparser.ConfigParser) -> None:
     )
     logging.debug("MODE: " + config["MODE"])
 
+    # Create directory structure here
+    output_run_dir_name = config["RUNTIME"] + "_" + config["MODE"] + "_run"
+    config["outputpath"] = os.path.join(constants.REPORTS, output_run_dir_name)
+    config["historypath"] = os.path.join(config["outputpath"], "history")
+    config["figurepath"] = os.path.join(config["outputpath"], "figures")
+
     if not os.path.exists(config["outputpath"]):
         os.makedirs(config["outputpath"])
+
+    if not os.path.exists(config["historypath"]):
+        os.makedirs(config["historypath"])
+
+    if not os.path.exists(config["figurepath"]):
+        os.makedirs(config["figurepath"])
+
+    # Backup of the config to local dir
+    config.write(open(os.path.join(config["outputpath"], "training_configuration.ini"), "w+"))
 
     if config["MODE"] == "detection":
 
@@ -108,8 +123,10 @@ def run_nucdetect(config: configparser.ConfigParser) -> None:
 
 def main():
 
+    RUNTIME = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
     LOGFILE = os.path.join(
-        constants.LOGDIR, datetime.now().strftime("%Y-%m-%d-%H-%M-%S_log.log")
+        constants.LOGDIR, RUNTIME + "_log.log"
     )
     logging.basicConfig(
         filename=LOGFILE,
@@ -136,6 +153,7 @@ def main():
         config.read(constants.CONFIGFILE)
 
     config = config[args.config]
+    config["RUNTIME"] = RUNTIME
 
     time_start = time.time()
 
