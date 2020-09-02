@@ -97,8 +97,8 @@ def run_nucdetect(config: configparser.ConfigParser) -> None:
     if config["MODE"] == "detection":
 
         # load trained model and predict nuc locations
-        NucDetectNet = model.load_trained_model(config["model_path"], "cnnmodel")
-        model.predict_with_model(NucDetectNet, config)
+        nuc_detect_net = model.load_trained_model(config["model_path"], "cnnmodel")
+        model.predict_with_model(nuc_detect_net, config)
 
     elif config["MODE"] == "adapt":
 
