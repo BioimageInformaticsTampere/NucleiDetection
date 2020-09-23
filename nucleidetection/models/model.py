@@ -201,8 +201,8 @@ def save_trained_model(cnn_model: Model, path: str, modelname: str) -> None:
     """
 
     # SAVE MODEL
-    weightpath = "".join([path, modelname, ".h5"])
-    jsonpath = "".join([path, modelname, ".json"])
+    weightpath = os.path.join(path, f"{modelname}.h5")
+    jsonpath = os.path.join(path, "{modelname}.json")
 
     model_json = cnn_model.to_json()
     with open(jsonpath, "w") as json_file:

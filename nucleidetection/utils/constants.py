@@ -26,6 +26,7 @@ LOGDIR = DATA = Path(__file__).parents[2].joinpath("logs")
 # DATA PATHS
 
 DATA = Path(__file__).parents[2].joinpath("data")
+DATA_CONF = Path(DATA).joinpath("CONF") # Placeholder for confidence images for DA
 DATA_HE = Path(DATA).joinpath("HE")
 DATA_ANNOTATIONS = Path(DATA).joinpath("annotations")
 
@@ -56,6 +57,7 @@ DEFAULT_CONFIG = {
     "nb_epoch": 1,
     "network_ds": 1,
     "imagepath": DATA_HE,
+    "confpath": DATA_CONF,
     "image_filetype": "tif",
     # Ground truth path
     "gtpath": Path(DATA).joinpath("gt"),

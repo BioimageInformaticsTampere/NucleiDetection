@@ -199,7 +199,7 @@ def get_input_from_confidence(
     # TODO: get docstring from Mira
 
     inputpath = config["imagepath"]
-    confidencepath = config["outputpath"]
+    confidencepath = config["confpath"]
 
     cnninput = []
     maskinput = []

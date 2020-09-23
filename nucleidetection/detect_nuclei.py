@@ -115,7 +115,13 @@ def run_nucdetect(config: configparser.ConfigParser) -> None:
     if config["MODE"] == "detection":
 
         # load trained model and predict nuc locations
-        nuc_detect_net = model.load_trained_model(config["model_path"], "cnnmodel")
+        # load DA-model if available, else use cnnmodel
+        
+        if os.path.isfile(os.path.join(config["model_path"], constants.DAMODEL)):
+            model_to_use = constants.DAMODEL
+        else:
+            model_to_use = constants.CNNMODEL
+        nuc_detect_net = model.load_trained_model(config["model_path"], model_to_use)
         model.predict_with_model(nuc_detect_net, config)
 
     elif config["MODE"] == "adapt":
