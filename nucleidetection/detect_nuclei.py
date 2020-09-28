@@ -108,15 +108,19 @@ def run_nucdetect(config: configparser.ConfigParser) -> None:
         os.makedirs(config["figurepath"])
 
     # Backup of the config to local dir
-    training_configuration = {key:value for key,value in [(option, config[option]) for option in config]}
-    with open(os.path.join(config["outputpath"], "training_configuration.json"), "w") as json_file:
+    training_configuration = {
+        key: value for key, value in [(option, config[option]) for option in config]
+    }
+    with open(
+        os.path.join(config["outputpath"], "training_configuration.json"), "w"
+    ) as json_file:
         json.dump(training_configuration, json_file)
 
     if config["MODE"] == "detection":
 
         # load trained model and predict nuc locations
         # load DA-model if available, else use cnnmodel
-        
+
         if os.path.isfile(os.path.join(config["model_path"], constants.DAMODEL)):
             model_to_use = constants.DAMODEL
         else:
@@ -134,9 +138,7 @@ def main():
 
     RUNTIME = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
-    LOGFILE = os.path.join(
-        constants.LOGDIR, RUNTIME + "_log.log"
-    )
+    LOGFILE = os.path.join(constants.LOGDIR, RUNTIME + "_log.log")
     logging.basicConfig(
         filename=LOGFILE,
         filemode="w",

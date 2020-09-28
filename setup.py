@@ -8,7 +8,7 @@ setup(
     author="Bioimage Informatics Tampere",
     license="",
     install_requires=[
-        "numpy==1.19.0",
+        "numpy>=1.16.0",
         "scipy==1.4.1",
         "scikit-image==0.17.2",
         "matplotlib==3.3.1",
